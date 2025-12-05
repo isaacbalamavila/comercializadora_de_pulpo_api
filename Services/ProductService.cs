@@ -22,19 +22,19 @@ namespace comercializadora_de_pulpo_api.Services
         private readonly IMapper _mapper = mapper;
         private readonly S3Service _s3Service = s3Service;
 
-        public async Task<Response<List<ProductDTO>>> GetAllProductsAsync(bool onlyActives)
+        public async Task<Response<List<ProductDTO>>> GetProductsAsync(bool onlyActives)
         {
             var products = await _productRepository.GetProductsAsync(onlyActives);
             return Response<List<ProductDTO>>.Ok(_mapper.Map<List<ProductDTO>>(products));
         }
 
-        public async Task<Response<ProductDetailsDTO>> GetProductById(Guid productId)
+        public async Task<Response<ProductDetailsDTO>> GetProductByIdAsync(Guid productId)
         {
             var product = await _productRepository.GetProductByIdAsync(productId);
 
             return product == null
                 ? Response<ProductDetailsDTO>.Fail(
-                    "El producto no existe",
+                    "Producto no encontrado",
                     $"No se encontro un producto con el ID '{productId}'",
                     404
                 )
@@ -246,10 +246,9 @@ namespace comercializadora_de_pulpo_api.Services
         //Helper Functions
         private async Task<string> GenerateSKUAsync(string rawMaterial, string unit)
         {
-            var totalProducts = await _productRepository.GetTotalProductsAsync();
-            var productNumber = totalProducts + 1;
+            var total = await _productRepository.GetTotalProductsAsync();
 
-            return $"{rawMaterial}{DateTime.UtcNow:yy}-{unit}-{productNumber:D4}";
+            return $"{rawMaterial}{DateTime.Now:yy}-{unit}-{(total + 1):D4}";
         }
     }
 }

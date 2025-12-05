@@ -1,4 +1,4 @@
-﻿using DevOne.Security.Cryptography.BCrypt;
+﻿using BCrypt.Net;
 
 namespace comercializadora_de_pulpo_api.Utilities
 {
@@ -13,17 +13,12 @@ namespace comercializadora_de_pulpo_api.Utilities
 
         public string Encrypt(string password)
         {
-            string salt = BCryptHelper.GenerateSalt();
-            string passwordhashed = BCryptHelper.HashPassword(password, salt);
-
-            return passwordhashed;
+            return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
         public bool Verify(string password, string passwordStored)
         {
-            bool isEqual = BCryptHelper.CheckPassword(password, passwordStored);
-
-            return isEqual;
+            return BCrypt.Net.BCrypt.Verify(password, passwordStored);
         }
 
         //Hacer Verificación con Regex

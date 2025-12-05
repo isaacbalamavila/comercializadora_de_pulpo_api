@@ -25,5 +25,7 @@ public partial class User
 
     public bool IsDeleted { get; set; }
 
+    public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
+
     public virtual Role Role { get; set; } = null!;
 }

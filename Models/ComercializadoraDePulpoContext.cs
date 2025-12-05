@@ -27,6 +27,8 @@ public partial class ComercializadoraDePulpoContext : DbContext
 
     public virtual DbSet<Supplier> Suppliers { get; set; }
 
+    public virtual DbSet<SuppliesInventory> SuppliesInventories { get; set; }
+
     public virtual DbSet<Unit> Units { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
@@ -133,11 +135,11 @@ public partial class ComercializadoraDePulpoContext : DbContext
 
         modelBuilder.Entity<Purchase>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__purchase__3213E83F95A4BFEF");
+            entity.HasKey(e => e.Id).HasName("PK__purchase__3213E83F04BDDCC7");
 
             entity.ToTable("purchases");
 
-            entity.HasIndex(e => e.Sku, "UQ__purchase__DDDF4BE787EE06A7").IsUnique();
+            entity.HasIndex(e => e.Sku, "UQ__purchase__DDDF4BE74DC7C8A7").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -151,25 +153,33 @@ public partial class ComercializadoraDePulpoContext : DbContext
                 .HasColumnName("price_kg");
             entity.Property(e => e.RawMaterialId).HasColumnName("raw_material_id");
             entity.Property(e => e.Sku)
-                .HasMaxLength(13)
+                .HasMaxLength(14)
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("sku");
             entity.Property(e => e.SupplierId).HasColumnName("supplier_id");
-            entity.Property(e => e.TotalKg).HasColumnName("total_kg");
+            entity.Property(e => e.TotalKg)
+                .HasColumnType("decimal(10, 3)")
+                .HasColumnName("total_kg");
             entity.Property(e => e.TotalPrice)
                 .HasColumnType("decimal(10, 3)")
                 .HasColumnName("total_price");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.RawMaterial).WithMany(p => p.Purchases)
                 .HasForeignKey(d => d.RawMaterialId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__purchases__raw_m__3AD6B8E2");
+                .HasConstraintName("FK__purchases__raw_m__07220AB2");
 
             entity.HasOne(d => d.Supplier).WithMany(p => p.Purchases)
                 .HasForeignKey(d => d.SupplierId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__purchases__suppl__39E294A9");
+                .HasConstraintName("FK__purchases__suppl__062DE679");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Purchases)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__purchases__user___08162EEB");
         });
 
         modelBuilder.Entity<RawMaterial>(entity =>
@@ -272,6 +282,50 @@ public partial class ComercializadoraDePulpoContext : DbContext
                 .IsUnicode(false)
                 .HasDefaultValueSql("(NULL)")
                 .HasColumnName("rfc");
+        });
+
+        modelBuilder.Entity<SuppliesInventory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__supplies__3213E83F382F94FA");
+
+            entity.ToTable("supplies_inventory");
+
+            entity.HasIndex(e => e.Sku, "UQ__supplies__DDDF4BE7058CBE26").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("id");
+            entity.Property(e => e.ExpirationDate)
+                .HasDefaultValueSql("(dateadd(month,(10),getdate()))")
+                .HasColumnType("datetime")
+                .HasColumnName("expiration_date");
+            entity.Property(e => e.PurchaseDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("purchase_date");
+            entity.Property(e => e.PurchaseId).HasColumnName("purchase_id");
+            entity.Property(e => e.RawMaterialId).HasColumnName("raw_material_id");
+            entity.Property(e => e.Sku)
+                .HasMaxLength(12)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("sku");
+            entity.Property(e => e.WeightKg)
+                .HasColumnType("decimal(10, 3)")
+                .HasColumnName("weight_kg");
+            entity.Property(e => e.WeightRemainKg)
+                .HasColumnType("decimal(10, 3)")
+                .HasColumnName("weight_remain_kg");
+
+            entity.HasOne(d => d.Purchase).WithMany(p => p.SuppliesInventories)
+                .HasForeignKey(d => d.PurchaseId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__supplies___purch__0EC32C7A");
+
+            entity.HasOne(d => d.RawMaterial).WithMany(p => p.SuppliesInventories)
+                .HasForeignKey(d => d.RawMaterialId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__supplies___raw_m__0FB750B3");
         });
 
         modelBuilder.Entity<Unit>(entity =>

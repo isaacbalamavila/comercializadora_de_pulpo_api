@@ -13,7 +13,9 @@ public partial class Purchase
 
     public int RawMaterialId { get; set; }
 
-    public int TotalKg { get; set; }
+    public Guid UserId { get; set; }
+
+    public decimal TotalKg { get; set; }
 
     public decimal TotalPrice { get; set; }
 
@@ -24,4 +26,8 @@ public partial class Purchase
     public virtual RawMaterial RawMaterial { get; set; } = null!;
 
     public virtual Supplier Supplier { get; set; } = null!;
+
+    public virtual ICollection<SuppliesInventory> SuppliesInventories { get; set; } = new List<SuppliesInventory>();
+
+    public virtual User User { get; set; } = null!;
 }

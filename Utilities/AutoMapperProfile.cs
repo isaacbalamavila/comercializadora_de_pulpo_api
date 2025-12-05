@@ -3,6 +3,7 @@ using comercializadora_de_pulpo_api.Models;
 using comercializadora_de_pulpo_api.Models.DTOs.Client;
 using comercializadora_de_pulpo_api.Models.DTOs.Login;
 using comercializadora_de_pulpo_api.Models.DTOs.Products;
+using comercializadora_de_pulpo_api.Models.DTOs.Purchases;
 using comercializadora_de_pulpo_api.Models.DTOs.RawMaterials;
 using comercializadora_de_pulpo_api.Models.DTOs.Role;
 using comercializadora_de_pulpo_api.Models.DTOs.Supplier;
@@ -70,6 +71,41 @@ namespace comercializadora_de_pulpo_api.Utilities
 
             //Units
             CreateMap<Unit, UnitDTO>();
+
+            //Purchases
+            CreateMap<Purchase, PurchaseDTO>()
+                .ForMember(dest => dest.Supplier, opt => opt.MapFrom(src => src.Supplier.Name))
+                .ForMember(
+                    dest => dest.RawMaterial,
+                    opt => opt.MapFrom(src => src.RawMaterial.Name)
+                );
+
+            CreateMap<Purchase, PurchaseDetailsDTO>()
+                .ForMember(dest => dest.Supplier, opt => opt.MapFrom(src => src.Supplier.Name))
+                .ForMember(
+                    dest => dest.SupplierEmail,
+                    opt => opt.MapFrom(src => src.Supplier.Email)
+                )
+                .ForMember(
+                    dest => dest.SupplierPhone,
+                    opt => opt.MapFrom(src => src.Supplier.Phone)
+                )
+                .ForMember(
+                    dest => dest.RawMaterial,
+                    opt => opt.MapFrom(src => src.RawMaterial.Name)
+                )
+                .ForMember(
+                    dest => dest.RawMaterialDescription,
+                    opt => opt.MapFrom(src => src.RawMaterial.Description)
+                )
+                .ForMember(
+                    dest => dest.UserName,
+                    opt=> opt.MapFrom(src => src.User.Name)
+                )
+                .ForMember(
+                    dest => dest.UserLastName,
+                    opt => opt.MapFrom(src => src.User.LastName)
+                );
         }
     }
 }

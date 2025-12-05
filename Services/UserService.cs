@@ -189,6 +189,7 @@ namespace comercializadora_de_pulpo_api.Services
                 );
 
             savedUser.Password = _password.Encrypt(newPassword);
+            savedUser.FirstLogin = false;
             var updateRequest = await _userRepository.UpdateUserAsync(savedUser);
 
             return updateRequest.IsSuccess

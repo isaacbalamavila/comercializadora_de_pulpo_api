@@ -37,13 +37,13 @@ namespace comercializadora_de_pulpo_api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts([FromQuery] bool? onlyActives)
         {
-            return HandleResponse(await _productService.GetAllProductsAsync(onlyActives ?? false));
+            return HandleResponse(await _productService.GetProductsAsync(onlyActives ?? false));
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetProductDetails([FromRoute] Guid id)
         {
-            return HandleResponse(await _productService.GetProductById(id));
+            return HandleResponse(await _productService.GetProductByIdAsync(id));
         }
 
         [HttpPost]

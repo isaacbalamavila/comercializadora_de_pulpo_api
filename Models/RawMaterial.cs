@@ -18,4 +18,6 @@ public partial class RawMaterial
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 
     public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
+
+    public virtual ICollection<SuppliesInventory> SuppliesInventories { get; set; } = new List<SuppliesInventory>();
 }

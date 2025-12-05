@@ -5,8 +5,8 @@ namespace comercializadora_de_pulpo_api.Services.Interfaces
 {
     public interface IProductService
     {
-        Task<Response<List<ProductDTO>>> GetAllProductsAsync(bool onlyActives);
-        Task<Response<ProductDetailsDTO>> GetProductById(Guid productId);
+        Task<Response<List<ProductDTO>>> GetProductsAsync(bool onlyActives);
+        Task<Response<ProductDetailsDTO>> GetProductByIdAsync(Guid productId);
         Task<Response<ProductDTO>> CreateProductAsync(CreateProductDTO request);
         Task<Response<ProductDetailsDTO>> UpdateProductAsync(
             Guid productId,

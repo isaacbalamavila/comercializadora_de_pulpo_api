@@ -9,6 +9,6 @@
         public decimal TotalKg { get; set; }
         public decimal PriceKg { get; set; }
         public decimal TotalPrice { get; set; }
-        public DateTime createdAt { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

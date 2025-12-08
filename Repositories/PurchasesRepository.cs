@@ -29,14 +29,14 @@ namespace comercializadora_de_pulpo_api.Repositories
             if (request.Supplier.HasValue)
                 query = query.Where(p => p.SupplierId == request.Supplier);
 
+            if (request.RawMaterial.HasValue)
+                query = query.Where(p => p.RawMaterialId == request.RawMaterial);
+
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
                 var search = request.Search.Trim();
                 query = query.Where(p => p.Sku.StartsWith(search));
             }
-
-            if (request.RawMaterial.HasValue)
-                query = query.Where(p => p.RawMaterialId == request.RawMaterial);
 
             if (request.Date.HasValue)
             {
@@ -56,11 +56,12 @@ namespace comercializadora_de_pulpo_api.Repositories
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync();
+
             var response = new PurchaseResponseDTO
             {
+                Page = request.Page,
                 Total = total,
                 TotalPages = (int)Math.Ceiling((double)total / request.PageSize),
-                Page = request.Page,
                 Purchases = _mapper.Map<List<PurchaseDTO>>(purchases),
             };
             return response;

@@ -7,6 +7,7 @@ using comercializadora_de_pulpo_api.Models.DTOs.Purchases;
 using comercializadora_de_pulpo_api.Models.DTOs.RawMaterials;
 using comercializadora_de_pulpo_api.Models.DTOs.Role;
 using comercializadora_de_pulpo_api.Models.DTOs.Supplier;
+using comercializadora_de_pulpo_api.Models.DTOs.Supplies_Inventory;
 using comercializadora_de_pulpo_api.Models.DTOs.Units;
 using comercializadora_de_pulpo_api.Models.DTOs.User;
 
@@ -98,13 +99,24 @@ namespace comercializadora_de_pulpo_api.Utilities
                     dest => dest.RawMaterialDescription,
                     opt => opt.MapFrom(src => src.RawMaterial.Description)
                 )
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Name))
+                .ForMember(dest => dest.UserLastName, opt => opt.MapFrom(src => src.User.LastName));
+
+            // SuppliesInventory
+            CreateMap<SuppliesInventory, SupplyDTO>()
                 .ForMember(
-                    dest => dest.UserName,
-                    opt=> opt.MapFrom(src => src.User.Name)
+                    dest => dest.RawMaterial,
+                    opt => opt.MapFrom(src => src.RawMaterial.Name)
+                );
+
+            CreateMap<SuppliesInventory, SupplyDetailsDTO>()
+                .ForMember(
+                    dest => dest.PurchaseSku,
+                    opt=> opt.MapFrom(src=>src.Purchase.Sku)
                 )
                 .ForMember(
-                    dest => dest.UserLastName,
-                    opt => opt.MapFrom(src => src.User.LastName)
+                    dest => dest.RawMaterial,
+                    opt => opt.MapFrom(src => src.RawMaterial.Name)
                 );
         }
     }

@@ -67,7 +67,7 @@ namespace comercializadora_de_pulpo_api.Repositories
             {
                 _context.Products.Update(UpdatedProduct);
                 await _context.SaveChangesAsync();
-                return Response<Product>.Ok(UpdatedProduct, 201);
+                return Response<Product>.Ok(UpdatedProduct, 200);
             }
             catch (Exception ex)
             {

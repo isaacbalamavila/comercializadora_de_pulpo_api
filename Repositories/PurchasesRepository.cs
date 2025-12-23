@@ -35,7 +35,7 @@ namespace comercializadora_de_pulpo_api.Repositories
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
                 var search = request.Search.Trim();
-                query = query.Where(p => p.Sku.StartsWith(search));
+                query = query.Where(p => p.Sku.Contains(search));
             }
 
             if (request.Date.HasValue)
@@ -44,6 +44,7 @@ namespace comercializadora_de_pulpo_api.Repositories
                 var end = start.AddDays(1);
                 query = query.Where(p => p.CreatedAt >= start && p.CreatedAt < end);
             }
+
 
             int total = await query.CountAsync();
 

@@ -120,12 +120,10 @@ namespace comercializadora_de_pulpo_api.Services
                 var purchase = new Purchase
                 {
                     Id = Guid.NewGuid(),
-                    Sku = await GeneratePurchaseSKUAsync(now),
+                    Sku = await GeneratePurchaseSKUAsync(),
                     UserId = request.UserId,
                     RawMaterialId = request.RawMaterialId,
-                    RawMaterial = rawMaterial,
                     SupplierId = request.SupplierId,
-                    Supplier = supplier,
                     TotalPrice = request.TotalPrice,
                     TotalKg = request.TotalKg,
                     PriceKg = request.TotalPrice / request.TotalKg,
@@ -142,7 +140,7 @@ namespace comercializadora_de_pulpo_api.Services
                 var supplie = new SuppliesInventory
                 {
                     Id = Guid.NewGuid(),
-                    Sku = await GenerateSupplieSKUAsync(rawMaterial.Abbreviation, now),
+                    Sku = await GenerateSupplieSKUAsync(rawMaterial.Abbreviation),
                     PurchaseDate = now,
                     ExpirationDate = now.AddMonths(10),
                     PurchaseId = purchase.Id,
@@ -170,17 +168,18 @@ namespace comercializadora_de_pulpo_api.Services
         }
 
         //Helper Functions
-        private async Task<string> GeneratePurchaseSKUAsync(DateTime date)
+        private async Task<string> GeneratePurchaseSKUAsync()
         {
+            var date = DateTime.Now;
             var total = await _purchaseRepository.GetTotalbyDateAsync(date);
             return $"COMP-{date:dd}{date:MM}{date:yy}-{(total + 1):d2}";
         }
 
         private async Task<string> GenerateSupplieSKUAsync(
-            string rawMaterialAbbrevitation,
-            DateTime date
+            string rawMaterialAbbrevitation
         )
         {
+            var date = DateTime.Now;
             var total = await _suppliesRepository.GetTotalbyDateAsync(date);
             return $"{rawMaterialAbbrevitation}-{date:dd}{date:MM}{date:yy}-{(total + 1):d2}";
         }

@@ -6,7 +6,7 @@ namespace comercializadora_de_pulpo_api.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<Response<List<UserDTO>>> GetUsersAsync(string userId);
+        Task<Response<List<UserDTO>>> GetUsersAsync(string userId, bool all);
         Task<Response<UserDTO>> GetUserByIdAsync(Guid userId);
         Task<Response<UserDetailsDTO>> GetUserDetailsByIdAsync(Guid userId);
         Task<Response<UserDTO>> CreateUserAsync(CreateUserDTO request);

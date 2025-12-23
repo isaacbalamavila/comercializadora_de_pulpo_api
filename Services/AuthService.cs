@@ -29,15 +29,15 @@ namespace comercializadora_de_pulpo_api.Services
 
             if (userSaved == null || userSaved.IsDeleted)
                 return Response<LoginResponseDTO>.Fail(
-                    "Credenciales Inválidas",
-                    "El correo o la contraseña proporcionados son incorrectos",
+                    "No se encontró una cuenta activa vinculada al correo",
+                    $"No se encontró una cuenta activa con el correo '{request.Email}'",
                     401
                 );
 
             if (!_password.Verify(request.Password, userSaved.Password))
                 return Response<LoginResponseDTO>.Fail(
-                    "Credenciales Inválidas",
-                    "El correo o la contraseña proporcionados son incorrectos",
+                    "Correo o contraseña incorrectas",
+                    "El correo o contraseña proporcionados son incorrectos",
                     401
                 );
 

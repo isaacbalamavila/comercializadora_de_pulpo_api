@@ -7,7 +7,7 @@ namespace comercializadora_de_pulpo_api.Repositories.Interfaces
     {
         Task<User?> GetUserByEmailAsync(string email);
         Task<User?> GetUserByIdAsync(Guid userId);
-        Task<List<User>> GetUsersAsync(Guid userId);
+        Task<List<User>> GetUsersAsync(Guid userId, bool all);
         Task<bool> VerifyEmailAsync(string email);
         Task<bool> VerifyPhoneAsync(string phone);
 

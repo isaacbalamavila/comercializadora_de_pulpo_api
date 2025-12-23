@@ -2,6 +2,7 @@
 using comercializadora_de_pulpo_api.Models;
 using comercializadora_de_pulpo_api.Models.DTOs.Client;
 using comercializadora_de_pulpo_api.Models.DTOs.Login;
+using comercializadora_de_pulpo_api.Models.DTOs.Proccess;
 using comercializadora_de_pulpo_api.Models.DTOs.Products;
 using comercializadora_de_pulpo_api.Models.DTOs.Purchases;
 using comercializadora_de_pulpo_api.Models.DTOs.RawMaterials;
@@ -110,13 +111,19 @@ namespace comercializadora_de_pulpo_api.Utilities
                 );
 
             CreateMap<SuppliesInventory, SupplyDetailsDTO>()
-                .ForMember(
-                    dest => dest.PurchaseSku,
-                    opt=> opt.MapFrom(src=>src.Purchase.Sku)
-                )
+                .ForMember(dest => dest.PurchaseSku, opt => opt.MapFrom(src => src.Purchase.Sku))
                 .ForMember(
                     dest => dest.RawMaterial,
                     opt => opt.MapFrom(src => src.RawMaterial.Name)
+                );
+
+            // Production Process
+            CreateMap<ProductionProcess, ProcessDTO>()
+                .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product.Name))
+                .ForMember(dest=>dest.ProductSku, opt => opt.MapFrom(src => src.Product.Sku))
+                .ForMember(
+                    dest => dest.User,
+                    opt => opt.MapFrom(src => $"{src.User.Name} {src.User.LastName}")
                 );
         }
     }

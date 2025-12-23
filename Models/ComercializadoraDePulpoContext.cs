@@ -19,11 +19,19 @@ public partial class ComercializadoraDePulpoContext : DbContext
 
     public virtual DbSet<Product> Products { get; set; }
 
+    public virtual DbSet<ProductBatch> ProductBatches { get; set; }
+
+    public virtual DbSet<ProductBatchSupply> ProductBatchSupplies { get; set; }
+
+    public virtual DbSet<ProductionProcess> ProductionProcesses { get; set; }
+
     public virtual DbSet<Purchase> Purchases { get; set; }
 
     public virtual DbSet<RawMaterial> RawMaterials { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<Status> Statuses { get; set; }
 
     public virtual DbSet<Supplier> Suppliers { get; set; }
 
@@ -133,6 +141,120 @@ public partial class ComercializadoraDePulpoContext : DbContext
                 .HasConstraintName("FK__products__unit_i__2B947552");
         });
 
+        modelBuilder.Entity<ProductBatch>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__product___3213E83F738FFEDA");
+
+            entity.ToTable("product_batches");
+
+            entity.HasIndex(e => e.Sku, "UQ__product___DDDF4BE7D2031A51").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.ExpirationDate)
+                .HasColumnType("datetime")
+                .HasColumnName("expiration_date");
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.ProductionProcessId).HasColumnName("production_process_id");
+            entity.Property(e => e.Quantity)
+                .HasColumnType("decimal(10, 3)")
+                .HasColumnName("quantity");
+            entity.Property(e => e.Remain)
+                .HasColumnType("decimal(10, 3)")
+                .HasColumnName("remain");
+            entity.Property(e => e.Sku)
+                .HasMaxLength(16)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("sku");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductBatches)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__product_b__produ__4DB4832C");
+
+            entity.HasOne(d => d.ProductionProcess).WithMany(p => p.ProductBatches)
+                .HasForeignKey(d => d.ProductionProcessId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__product_b__produ__4CC05EF3");
+        });
+
+        modelBuilder.Entity<ProductBatchSupply>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__product___3213E83F4A41B983");
+
+            entity.ToTable("product_batch_supplies");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("id");
+            entity.Property(e => e.ProductBatchId)
+                .HasDefaultValueSql("(NULL)")
+                .HasColumnName("product_batch_id");
+            entity.Property(e => e.ProductionProcessId).HasColumnName("production_process_id");
+            entity.Property(e => e.SuppliesInventoryId).HasColumnName("supplies_inventory_id");
+            entity.Property(e => e.UsedWeightKg)
+                .HasColumnType("decimal(10, 3)")
+                .HasColumnName("used_weight_kg");
+
+            entity.HasOne(d => d.ProductBatch).WithMany(p => p.ProductBatchSupplies)
+                .HasForeignKey(d => d.ProductBatchId)
+                .HasConstraintName("FK__product_b__produ__695C9DA1");
+
+            entity.HasOne(d => d.ProductionProcess).WithMany(p => p.ProductBatchSupplies)
+                .HasForeignKey(d => d.ProductionProcessId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__product_b__produ__6B44E613");
+
+            entity.HasOne(d => d.SuppliesInventory).WithMany(p => p.ProductBatchSupplies)
+                .HasForeignKey(d => d.SuppliesInventoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__product_b__suppl__6A50C1DA");
+        });
+
+        modelBuilder.Entity<ProductionProcess>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__producti__3213E83F0814A2D9");
+
+            entity.ToTable("production_process");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("id");
+            entity.Property(e => e.EndDate)
+                .HasDefaultValueSql("(NULL)")
+                .HasColumnType("datetime")
+                .HasColumnName("end_date");
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.Quantity).HasColumnName("quantity");
+            entity.Property(e => e.StartDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("start_date");
+            entity.Property(e => e.StatusId).HasColumnName("status_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductionProcesses)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__productio__produ__451F3D2B");
+
+            entity.HasOne(d => d.Status).WithMany(p => p.ProductionProcesses)
+                .HasForeignKey(d => d.StatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__productio__statu__46136164");
+
+            entity.HasOne(d => d.User).WithMany(p => p.ProductionProcesses)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__productio__user___442B18F2");
+        });
+
         modelBuilder.Entity<Purchase>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__purchase__3213E83F04BDDCC7");
@@ -231,6 +353,21 @@ public partial class ComercializadoraDePulpoContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<Status>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__status__3213E83FDC28710A");
+
+            entity.ToTable("status");
+
+            entity.HasIndex(e => e.Label, "UQ__status__4823FDB27F58CEED").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Label)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("label");
         });
 
         modelBuilder.Entity<Supplier>(entity =>
@@ -366,7 +503,9 @@ public partial class ComercializadoraDePulpoContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("email");
-            entity.Property(e => e.FirstLogin).HasColumnName("first_login");
+            entity.Property(e => e.FirstLogin)
+                .HasDefaultValue(true)
+                .HasColumnName("first_login");
             entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.LastName)
                 .HasMaxLength(50)

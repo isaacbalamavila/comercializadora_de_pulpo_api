@@ -106,6 +106,9 @@ builder.Services.AddScoped<IRawMaterialsRepository, RawMaterialsRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IPurchaseRepository, PurchasesRepository>();
 builder.Services.AddScoped<ISuppliesInventoryRepository, SuppliesInventoryRespository>();
+builder.Services.AddScoped<IProcessRepository, ProcessRepository>();
+builder.Services.AddScoped<IProductInventoryRepository, ProductsInventoryRepository>();
+builder.Services.AddScoped<IProductSupplyRepository, ProductSupplyRepository>();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -118,27 +121,28 @@ builder.Services.AddScoped<IRawMaterialsService, RawMaterialsService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddScoped<ISuppliesInventoryService, SuppliesInventoryService>();
+builder.Services.AddScoped<IProcessService, ProcessService>();
+builder.Services.AddScoped<IProductInventoryService, ProductInventoryService>();
 
 // Authorization Police
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy(
-        "AdminOrManager",
-        policy => policy.RequireRole("administrador", "supervisor")
-    );
-
-    options.AddPolicy("Admin", policy => policy.RequireRole("administrador"));
-
-    options.AddPolicy("Employee", policy => policy.RequireRole("empleado general"));
-
-    options.AddPolicy("Manager", policy => policy.RequireRole("gerente"));
-
-    options.AddPolicy("Warehouse", policy => policy.RequireRole("almacenista"));
-});
+builder
+    .Services.AddAuthorizationBuilder()
+    .AddPolicy("AdminOrManager", policy => policy.RequireRole("administrador", "supervisor"))
+    .AddPolicy(
+        "ManagerOrWarehouse",
+        policy => policy.RequireRole("administrador", "supervisor", "almacenista")
+    )
+    .AddPolicy("Admin", policy => policy.RequireRole("administrador"))
+    .AddPolicy("Employee", policy => policy.RequireRole("empleado general"))
+    .AddPolicy("Manager", policy => policy.RequireRole("gerente"))
+    .AddPolicy("Warehouse", policy => policy.RequireRole("almacenista"));
 
 //AWS Services
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();
+
+
+/*builder.WebHost.UseUrls("http://0.0.0.0:7057")*/;
 
 var app = builder.Build();
 

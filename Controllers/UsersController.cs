@@ -33,11 +33,11 @@ namespace comercializadora_de_pulpo_api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = RoleAccess.ADMIN)]
-        public async Task<IActionResult> GetUsers()
+        [Authorize(Policy = RoleAccess.ADMINORMANAGER)]
+        public async Task<IActionResult> GetUsers([FromQuery]bool all = false)
         {
             string userId = Request.Headers ["userId"].ToString();
-            return HandleResponse(await _userService.GetUsersAsync(userId));
+            return HandleResponse(await _userService.GetUsersAsync(userId, all));
         }
 
         [HttpGet("{id:Guid}")]

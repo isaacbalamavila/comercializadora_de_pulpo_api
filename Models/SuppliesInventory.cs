@@ -21,6 +21,8 @@ public partial class SuppliesInventory
 
     public DateTime ExpirationDate { get; set; }
 
+    public virtual ICollection<ProductBatchSupply> ProductBatchSupplies { get; set; } = new List<ProductBatchSupply>();
+
     public virtual Purchase Purchase { get; set; } = null!;
 
     public virtual RawMaterial RawMaterial { get; set; } = null!;

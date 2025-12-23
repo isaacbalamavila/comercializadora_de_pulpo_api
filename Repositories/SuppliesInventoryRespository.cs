@@ -24,6 +24,16 @@ namespace comercializadora_de_pulpo_api.Repositories
                 .CountAsync();
         }
 
+        public async Task<List<SuppliesInventory>> GetSuppliesForProductionAsync(int rawMaterialId)
+        {
+            return await _context
+                .SuppliesInventories.Where(sp =>
+                    sp.WeightRemainKg > 0 && sp.RawMaterialId == rawMaterialId
+                )
+                .OrderBy(sp => sp.ExpirationDate)
+                .ToListAsync();
+        }
+
         public async Task<SuppliesResponseDTO> GetSuppliesAsync(SuppliesRequestDTO request)
         {
             IQueryable<SuppliesInventory> query = _context.SuppliesInventories.AsQueryable();
@@ -39,12 +49,12 @@ namespace comercializadora_de_pulpo_api.Repositories
             if (!String.IsNullOrEmpty(request.Search))
             {
                 var search = request.Search.Trim();
-                query = query.Where(sp => sp.Sku.StartsWith(search));
+                query = query.Where(sp => sp.Sku.Contains(search));
             }
 
             int total = await query.CountAsync();
 
-            query = query.Include(sp => sp.RawMaterial).OrderBy(sp => sp.ExpirationDate);
+            query = query.Include(sp => sp.RawMaterial).OrderByDescending(sp => sp.ExpirationDate);
 
             var supplies = await query
                 .Skip((request.Page - 1) * request.PageSize)
@@ -55,7 +65,7 @@ namespace comercializadora_de_pulpo_api.Repositories
             {
                 Page = request.Page,
                 Total = total,
-                TotalPages = ( int )Math.Ceiling(( double )total / request.PageSize),
+                TotalPages = (int)Math.Ceiling((double)total / request.PageSize),
                 Supplies = _mapper.Map<List<SupplyDTO>>(supplies),
             };
 
@@ -65,8 +75,7 @@ namespace comercializadora_de_pulpo_api.Repositories
         public async Task<SuppliesInventory?> GetSupplyByIdAsync(Guid id)
         {
             return await _context
-                .SuppliesInventories
-                .Include(sp => sp.RawMaterial)
+                .SuppliesInventories.Include(sp => sp.RawMaterial)
                 .Include(sp => sp.Purchase)
                 .FirstOrDefaultAsync(sp => sp.Id == id);
         }
@@ -90,7 +99,9 @@ namespace comercializadora_de_pulpo_api.Repositories
             }
         }
 
-        public async Task<Response<SuppliesInventory>> UpdateSupplyAsync(SuppliesInventory UpdatedSupply)
+        public async Task<Response<SuppliesInventory>> UpdateSupplyAsync(
+            SuppliesInventory UpdatedSupply
+        )
         {
             try
             {

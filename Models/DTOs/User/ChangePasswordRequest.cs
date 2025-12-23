@@ -6,9 +6,9 @@ namespace comercializadora_de_pulpo_api.Models.DTOs.User
     {
         [Required(ErrorMessage = "La contraseña es obligatoria")]
         [RegularExpression(
-            @"^(?=.*\d.*\d)(?=.*[!@#$%^&*(),.?""{}|<>_\-+=])(?=.*[A-Za-z]).{8,}$",
-            ErrorMessage = "La contraseña debe tener al menos 8 caracteres, incluir 2 números y 1 carácter especial."
-        )]
+            @"^(?=.*[A-Z])(?=.*\d.*\d)(?=.*[!@#$%^&*(),.?""{}|<>_\-+=]).{8,}$",
+            ErrorMessage = "La contraseña debe tener al menos 8 caracteres, incluir 1 mayúscula, 2 números y 1 carácter especial."
+        ) ]
         public string NewPassword { get; set; } = null!;
     }
 }

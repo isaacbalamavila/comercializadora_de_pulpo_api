@@ -19,16 +19,16 @@ namespace comercializadora_de_pulpo_api.Services
         private readonly IMapper _mapper = mapper;
         private readonly Password _password = password;
 
-        public async Task<Response<List<UserDTO>>> GetUsersAsync(string userId)
+        public async Task<Response<List<UserDTO>>> GetUsersAsync(string userId, bool all)
         {
-            if (String.IsNullOrEmpty(userId))
+            if (!all & String.IsNullOrEmpty(userId))
                 return Response<List<UserDTO>>.Fail(
                     "El Encabezado userID es obligatorio.",
                     "No se proporcionó un ID válido en el header 'userID'.",
                     400
                 );
 
-            var users = await _userRepository.GetUsersAsync(Guid.Parse(userId));
+            var users = await _userRepository.GetUsersAsync(Guid.Parse(userId), all);
 
             return users == null
                 ? Response<List<UserDTO>>.Fail(

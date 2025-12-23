@@ -12,13 +12,17 @@ namespace comercializadora_de_pulpo_api.Repositories
         private readonly ComercializadoraDePulpoContext _context = context;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<List<User>> GetUsersAsync(Guid userId)
+        public async Task<List<User>> GetUsersAsync(Guid userId, bool all)
         {
-            return await _context
+            var query = _context
                 .Users.Include(u => u.Role)
-                .Where(u => u.Id != userId)
                 .OrderByDescending(u => u.CreatedAt)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (!all)
+                query = query.Where(u => u.Id != userId);
+
+            return await query.ToListAsync();
         }
 
         public async Task<User?> GetUserByEmailAsync(string email)

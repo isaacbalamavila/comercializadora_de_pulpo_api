@@ -33,6 +33,10 @@ public partial class Product
 
     public bool IsDeleted { get; set; }
 
+    public virtual ICollection<ProductBatch> ProductBatches { get; set; } = new List<ProductBatch>();
+
+    public virtual ICollection<ProductionProcess> ProductionProcesses { get; set; } = new List<ProductionProcess>();
+
     public virtual RawMaterial RawMaterial { get; set; } = null!;
 
     public virtual Unit Unit { get; set; } = null!;

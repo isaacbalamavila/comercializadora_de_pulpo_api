@@ -18,7 +18,7 @@ namespace comercializadora_de_pulpo_api.Models.DTOs.User
         public string LastName { get; set; } = null!;
 
         [Required]
-        public int RoleID { get; set; }
+        public int RoleId { get; set; }
 
         [Required]
         public string Role { get; set; } = null!;

@@ -13,13 +13,13 @@ public partial class ProductBatch
 
     public string Sku { get; set; } = null!;
 
-    public decimal Quantity { get; set; }
+    public int Quantity { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
-    public DateTime? ExpirationDate { get; set; }
+    public DateTime ExpirationDate { get; set; }
 
-    public decimal Remain { get; set; }
+    public int Remain { get; set; }
 
     public virtual Product Product { get; set; } = null!;
 

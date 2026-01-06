@@ -362,8 +362,8 @@ namespace comercializadora_de_pulpo_api.Services
                         ProductionProcessId = processSaved.Id,
                         ProductId = processSaved.ProductId,
                         Sku = await GenerateSKU(batchSupply),
-                        Quantity = totalPieces,
-                        Remain = totalPieces,
+                        Quantity = (int)totalPieces,
+                        Remain = (int)totalPieces,
                         CreatedAt = DateTime.Now,
                         ExpirationDate = supply.ExpirationDate,
                     };

@@ -42,7 +42,7 @@ namespace comercializadora_de_pulpo_api.Repositories
                 query = query.Where(sp => sp.RawMaterialId == request.RawMaterial);
 
             if (request.Availables.HasValue)
-                query = (bool)request.Availables
+                query = request.Availables.Value
                     ? query.Where(sp => sp.WeightRemainKg > 0)
                     : query.Where(sp => sp.WeightRemainKg == 0);
 
@@ -112,7 +112,7 @@ namespace comercializadora_de_pulpo_api.Repositories
             catch (Exception ex)
             {
                 return Response<SuppliesInventory>.Fail(
-                    "Ocurrió un error al intentar actualizar la información del producto",
+                    "Ocurrió un error al intentar actualizar la información del insumo",
                     ex.Message
                 );
             }

@@ -9,7 +9,7 @@ namespace comercializadora_de_pulpo_api.Services.Interfaces
         Task<Response<SupplyDetailsDTO>> GetSupplyByIdAsync(Guid supplyId);
         Task<Response<SupplyDTO>> UpdateWeightRemainAsync(
             Guid supplyId,
-            UpdateWeightRemain request
+            UpdateRemain request
         );
         Task<Response<bool>> DisposeSupplyAsync(Guid supplyId);
     }

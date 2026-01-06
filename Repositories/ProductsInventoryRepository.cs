@@ -57,6 +57,7 @@ namespace comercializadora_de_pulpo_api.Repositories
                         new ProductInventoryDTO
                         {
                             Id = product.Id,
+                            Sku = product.Sku,
                             Name = product.Name,
                             RawMaterial = product.RawMaterial.Name,
                             Price = product.Price,
@@ -79,20 +80,19 @@ namespace comercializadora_de_pulpo_api.Repositories
         {
             IQueryable<ProductBatch> query = _context.ProductBatches.AsQueryable();
 
-            if (request.Sku != null)
-                query = query.Where(pb => pb.Sku.Contains(request.Sku));
+            if (!String.IsNullOrEmpty(request.Search))
+            {
+                var search = request.Search.Trim();
+                query = query.Where(pb => pb.Sku.Contains(search));
+            }
 
             if (request.ProductId.HasValue)
                 query = query.Where(pb => pb.ProductId == request.ProductId);
 
-            if (request.Status.HasValue)
-            {
-                if (request.Status.Value == 1)
-                    query = query.Where(pb => pb.Remain > 0);
-
-                if (request.Status.Value == 2)
-                    query = query.Where(pb => pb.Remain == 0);
-            }
+            if (request.Availables.HasValue)
+                query = request.Availables.Value
+                    ? query.Where(sp => sp.Remain > 0)
+                    : query.Where(sp => sp.Remain == 0);
 
             int total = await query.CountAsync();
 
@@ -111,7 +111,7 @@ namespace comercializadora_de_pulpo_api.Repositories
                     QuantityRemain = pb.Remain,
                     Price = pb.Product.Price,
                     CreatedAt = pb.CreatedAt,
-                    ExpirationDate = pb.ExpirationDate
+                    ExpirationDate = pb.ExpirationDate,
                 })
                 .ToListAsync();
 
@@ -122,6 +122,63 @@ namespace comercializadora_de_pulpo_api.Repositories
                 TotalPages = (int)Math.Ceiling((double)total / request.PageSize),
                 Productbatches = productBatches,
             };
+        }
+
+        public async Task<ProductBatch?> GetProductBatchByIdAsync(Guid productBatchId)
+        {
+            return await _context
+                .ProductBatches.Where(p => p.Id == productBatchId)
+                .Include(p => p.Product)
+                .ThenInclude(p => p.Unit)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<Response<ProductBatch>> UpdateProductBatchAsync(
+            ProductBatch productBatchUpdated
+        )
+        {
+            try
+            {
+                _context.ProductBatches.Update(productBatchUpdated);
+                await _context.SaveChangesAsync();
+                return Response<ProductBatch>.Ok(productBatchUpdated);
+            }
+            catch (Exception ex)
+            {
+                return Response<ProductBatch>.Fail(
+                    "Ocurrió un error al intentar actualizar la información del lote",
+                    ex.Message
+                );
+            }
+        }
+
+        public async Task<ProductBatchDetails?> GetProductBatchDetailsByIdAsync(Guid ProductBatchId)
+        {
+            var productSaved = await _context
+                .ProductBatches.Select(p => new ProductBatchDetails
+                {
+                    Id = p.Id,
+                    quantity = p.Quantity,
+                    quantityRemain = p.Remain,
+                    Sku = p.Sku,
+                    CreationDate = p.CreatedAt,
+                    ExpirationDate = p.ExpirationDate,
+                    UserName =
+                        $"{p.ProductionProcess.User.Name} {p.ProductionProcess.User.LastName}",
+                    ProcessId = p.ProductionProcess.Id,
+                    Product = new ProductInfo
+                    {
+                        Sku = p.Product.Sku,
+                        Name = p.Product.Name,
+                        Content = p.Product.Content,
+                        Unit = p.Product.Unit.Abbreviation,
+                        Price = p.Product.Price,
+                    },
+                })
+                .Where(p => p.Id == ProductBatchId)
+                .FirstOrDefaultAsync();
+
+            return productSaved;
         }
     }
 }

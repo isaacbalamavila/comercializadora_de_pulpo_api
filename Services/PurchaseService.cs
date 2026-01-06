@@ -48,7 +48,7 @@ namespace comercializadora_de_pulpo_api.Services
             return Response<PurchaseDetailsDTO>.Ok(_mapper.Map<PurchaseDetailsDTO>(purchaseSaved));
         }
 
-        public async Task<Response<PurchaseDTO>> CreatePurchase(CreatePurchaseDTO request)
+        public async Task<Response<PurchaseDTO>> SavePurchase(CreatePurchaseDTO request)
         {
             var yucatanTZ = TimeZoneInfo.FindSystemTimeZoneById("America/Merida");
             var nowYucatan = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, yucatanTZ);

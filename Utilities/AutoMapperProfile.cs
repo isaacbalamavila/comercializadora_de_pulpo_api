@@ -23,7 +23,7 @@ namespace comercializadora_de_pulpo_api.Utilities
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.Name));
 
             CreateMap<User, UserDetailsDTO>()
-                .ForMember(dest => dest.RoleID, opt => opt.MapFrom(src => src.RoleId))
+                .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.RoleId))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.Name))
                 .ForMember(
                     dest => dest.RoleDescription,

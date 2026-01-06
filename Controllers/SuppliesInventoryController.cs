@@ -44,7 +44,7 @@ namespace comercializadora_de_pulpo_api.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateWeightRemain(Guid id, [FromBody] UpdateWeightRemain request) {
+        public async Task<IActionResult> UpdateWeightRemain(Guid id, [FromBody] UpdateRemain request) {
             return HandleResponse(await _suppliesService.UpdateWeightRemainAsync(id, request));
         }
 

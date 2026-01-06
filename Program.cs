@@ -109,6 +109,7 @@ builder.Services.AddScoped<ISuppliesInventoryRepository, SuppliesInventoryRespos
 builder.Services.AddScoped<IProcessRepository, ProcessRepository>();
 builder.Services.AddScoped<IProductInventoryRepository, ProductsInventoryRepository>();
 builder.Services.AddScoped<IProductSupplyRepository, ProductSupplyRepository>();
+builder.Services.AddScoped<ISalesRepository, SalesRepository>();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -123,6 +124,7 @@ builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddScoped<ISuppliesInventoryService, SuppliesInventoryService>();
 builder.Services.AddScoped<IProcessService, ProcessService>();
 builder.Services.AddScoped<IProductInventoryService, ProductInventoryService>();
+builder.Services.AddScoped<ISalesService, SalesService>();
 
 // Authorization Police
 builder
@@ -141,8 +143,7 @@ builder
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();
 
-
-/*builder.WebHost.UseUrls("http://0.0.0.0:7057")*/;
+builder.WebHost.UseUrls("http://0.0.0.0:7057");
 
 var app = builder.Build();
 

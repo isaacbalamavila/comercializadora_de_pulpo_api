@@ -39,11 +39,10 @@ namespace comercializadora_de_pulpo_api.Services
 
         public async Task<Response<SupplyDTO>> UpdateWeightRemainAsync(
             Guid supplyId,
-            UpdateWeightRemain request
+            UpdateRemain request
         )
         {
-
-            if (request.updateWeightRemain < 0)
+            if (request.UpdatedRemain < 0)
                 return Response<SupplyDTO>.Fail(
                     "Monto inválido",
                     "El monto asignado debe ser mayor 0",
@@ -66,27 +65,25 @@ namespace comercializadora_de_pulpo_api.Services
                     400
                 );
 
-            if (request.updateWeightRemain > savedSupply.WeightRemainKg)
+            if (request.UpdatedRemain > savedSupply.WeightRemainKg)
                 return Response<SupplyDTO>.Fail(
                     "Monto máximo excedido",
                     "No se puede asignar un monto mayor al disponible",
                     400
                 );
 
-            if (savedSupply.WeightRemainKg == request.updateWeightRemain)
-                return Response<SupplyDTO>.Ok(
-                    _mapper.Map<SupplyDTO>(savedSupply)
-                );
+            if (savedSupply.WeightRemainKg == request.UpdatedRemain)
+                return Response<SupplyDTO>.Ok(_mapper.Map<SupplyDTO>(savedSupply));
 
             // Update weigth remain
-            savedSupply.WeightRemainKg = request.updateWeightRemain;
+            savedSupply.WeightRemainKg = request.UpdatedRemain;
 
             var updateRequest = await _suppliesRepository.UpdateSupplyAsync(savedSupply);
 
             return updateRequest.IsSuccess
                 ? Response<SupplyDTO>.Ok(_mapper.Map<SupplyDTO>(updateRequest.Data))
                 : Response<SupplyDTO>.Fail(
-                    "Ocurrió un error al intentar la cantidad disponible",
+                    "Ocurrió un error al intentar actualizar la cantidad disponible del lote",
                     updateRequest.Error!.ErrorDetails
                 );
         }

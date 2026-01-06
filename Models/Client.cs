@@ -18,4 +18,6 @@ public partial class Client
     public DateTime CreatedAt { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
 }

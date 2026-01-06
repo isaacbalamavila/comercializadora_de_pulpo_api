@@ -17,6 +17,8 @@ public partial class ComercializadoraDePulpoContext : DbContext
 
     public virtual DbSet<Client> Clients { get; set; }
 
+    public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
+
     public virtual DbSet<Product> Products { get; set; }
 
     public virtual DbSet<ProductBatch> ProductBatches { get; set; }
@@ -30,6 +32,10 @@ public partial class ComercializadoraDePulpoContext : DbContext
     public virtual DbSet<RawMaterial> RawMaterials { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<Sale> Sales { get; set; }
+
+    public virtual DbSet<SaleItem> SaleItems { get; set; }
 
     public virtual DbSet<Status> Statuses { get; set; }
 
@@ -79,6 +85,21 @@ public partial class ComercializadoraDePulpoContext : DbContext
                 .IsUnicode(false)
                 .HasDefaultValueSql("(NULL)")
                 .HasColumnName("rfc");
+        });
+
+        modelBuilder.Entity<PaymentMethod>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__payment___3213E83FB2EDE84B");
+
+            entity.ToTable("payment_methods");
+
+            entity.HasIndex(e => e.Name, "UQ__payment___72E12F1BC68A4545").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -161,12 +182,8 @@ public partial class ComercializadoraDePulpoContext : DbContext
                 .HasColumnName("expiration_date");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.ProductionProcessId).HasColumnName("production_process_id");
-            entity.Property(e => e.Quantity)
-                .HasColumnType("decimal(10, 3)")
-                .HasColumnName("quantity");
-            entity.Property(e => e.Remain)
-                .HasColumnType("decimal(10, 3)")
-                .HasColumnName("remain");
+            entity.Property(e => e.Quantity).HasColumnName("quantity");
+            entity.Property(e => e.Remain).HasColumnName("remain");
             entity.Property(e => e.Sku)
                 .HasMaxLength(16)
                 .IsUnicode(false)
@@ -353,6 +370,74 @@ public partial class ComercializadoraDePulpoContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<Sale>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__sales__3213E83F59FEA98A");
+
+            entity.ToTable("sales");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("id");
+            entity.Property(e => e.ClientId).HasColumnName("client_id");
+            entity.Property(e => e.EmployeeId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("employee_id");
+            entity.Property(e => e.PaymentMethod).HasColumnName("payment_method");
+            entity.Property(e => e.SaleDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("sale_date");
+            entity.Property(e => e.TotalAmount)
+                .HasColumnType("decimal(12, 2)")
+                .HasColumnName("total_amount");
+
+            entity.HasOne(d => d.Client).WithMany(p => p.Sales)
+                .HasForeignKey(d => d.ClientId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__sales__payment_m__0D99FE17");
+
+            entity.HasOne(d => d.Employee).WithMany(p => p.Sales)
+                .HasForeignKey(d => d.EmployeeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("sales_employee");
+
+            entity.HasOne(d => d.PaymentMethodNavigation).WithMany(p => p.Sales)
+                .HasForeignKey(d => d.PaymentMethod)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__sales__payment_m__0E8E2250");
+        });
+
+        modelBuilder.Entity<SaleItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__sale_ite__3213E83F4841FF44");
+
+            entity.ToTable("sale_items");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("id");
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.Quantity).HasColumnName("quantity");
+            entity.Property(e => e.SaleId).HasColumnName("sale_id");
+            entity.Property(e => e.Subtotal)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("subtotal");
+            entity.Property(e => e.UnitPrice)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("unit_price");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.SaleItems)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__sale_item__produ__1352D76D");
+
+            entity.HasOne(d => d.Sale).WithMany(p => p.SaleItems)
+                .HasForeignKey(d => d.SaleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__sale_item__sale___125EB334");
         });
 
         modelBuilder.Entity<Status>(entity =>

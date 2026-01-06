@@ -1,5 +1,5 @@
 ﻿using comercializadora_de_pulpo_api.Models;
-using comercializadora_de_pulpo_api.Models.DTOs.Purchases;
+using comercializadora_de_pulpo_api.Models.DTOs.Sale;
 using comercializadora_de_pulpo_api.Services.Interfaces;
 using comercializadora_de_pulpo_api.Utilities;
 using Microsoft.AspNetCore.Authorization;
@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace comercializadora_de_pulpo_api.Controllers
 {
-    [Route("/purchases")]
-    [ApiController]
+    [Route("/sales")]
     [Authorize]
-    public class PurchaseController (IPurchaseService purchaseService) : ControllerBase
+    [ApiController]
+    public class SalesController(ISalesService salesService) : ControllerBase
     {
-        private readonly IPurchaseService _purchaseService = purchaseService;
+        private readonly ISalesService _salesService = salesService;
+
         private IActionResult HandleResponse<T>(Response<T> response, object? successData = null)
         {
             if (response.IsSuccess)
@@ -34,22 +35,22 @@ namespace comercializadora_de_pulpo_api.Controllers
 
         [HttpGet]
         [Authorize(Policy = RoleAccess.ADMINORMANAGER)]
-        public async Task<IActionResult> GetPurchases([FromQuery] PurchaseRequestDTO request) {
-            return HandleResponse(await _purchaseService.GetPurchasesAsync(request));
+        public async Task<IActionResult> GetSalesAsync([FromQuery] SalesRequestDTO request)
+        {
+            return HandleResponse(await _salesService.GetSalesAsync(request));
         }
 
         [HttpGet("{id:guid}")]
         [Authorize(Policy = RoleAccess.ADMINORMANAGER)]
-        public async Task<IActionResult> GetPurchasesDetails(Guid id)
+        public async Task<IActionResult> GetSaleDetailsByIdAsync([FromRoute] Guid id)
         {
-            return HandleResponse(await _purchaseService.GetPurchaseByIdAsync(id));
+            return HandleResponse(await _salesService.GetSaleDetailsByIdAsync(id));
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePurchase(CreatePurchaseDTO request) {
-            return HandleResponse(await _purchaseService.SavePurchase(request));
+        public async Task<IActionResult> MakeSale([FromBody] SaleRequest request)
+        {
+            return HandleResponse(await _salesService.SaveSale(request));
         }
-
-
     }
 }

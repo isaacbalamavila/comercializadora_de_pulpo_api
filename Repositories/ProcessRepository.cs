@@ -43,7 +43,15 @@ namespace comercializadora_de_pulpo_api.Repositories
             {
                 var start = request.Date.Value.Date;
                 var end = start.AddDays(1);
-                query = query.Where(p => p.StartDate >= start && p.StartDate < end);
+                if (request.IsMovil.HasValue && request.IsMovil.Value &&
+                    request.Status.HasValue && request.Status.Value == 3)
+                {
+                    query = query.Where(p => p.EndDate >= start && p.EndDate < end);
+                }
+                else
+                {
+                    query = query.Where(p => p.StartDate >= start && p.StartDate < end);
+                }
             }
 
             int total = await query.CountAsync();

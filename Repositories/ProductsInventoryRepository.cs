@@ -42,31 +42,21 @@ namespace comercializadora_de_pulpo_api.Repositories
         public async Task<List<ProductInventoryDTO>> GetProductInventoryAsync()
         {
             var inventory = await _context
-                .ProductBatches.GroupBy(pb => pb.ProductId)
-                .Select(g => new
+                .Products.Where(p => !p.IsDeleted)
+                .Select(p => new ProductInventoryDTO
                 {
-                    ProductId = g.Key,
-                    TotalQuantity = g.Sum(pb => pb.Remain), // Remain Pieces
-                    BatchCount = g.Count(),
+                    Id = p.Id,
+                    Sku = p.Sku,
+                    Name = p.Name,
+                    RawMaterial = p.RawMaterial.Name,
+                    Price = p.Price,
+                    Content = p.Content,
+                    Unit = p.Unit.Abbreviation,
+                    StockMin = p.StockMin,
+                    Quantity = p
+                        .ProductBatches.Where(pb => pb.Remain > 0)
+                        .Sum(pb => pb.Remain),
                 })
-                .Join(
-                    _context.Products.Where(p => !p.IsDeleted),
-                    batch => batch.ProductId,
-                    product => product.Id,
-                    (batch, product) =>
-                        new ProductInventoryDTO
-                        {
-                            Id = product.Id,
-                            Sku = product.Sku,
-                            Name = product.Name,
-                            RawMaterial = product.RawMaterial.Name,
-                            Price = product.Price,
-                            Content = product.Content,
-                            Unit = product.Unit.Abbreviation,
-                            StockMin = product.StockMin,
-                            Quantity = batch.TotalQuantity,
-                        }
-                )
                 .Where(p => p.Quantity > 0)
                 .OrderByDescending(p => p.Quantity)
                 .ToListAsync();

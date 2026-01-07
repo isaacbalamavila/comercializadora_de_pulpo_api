@@ -45,27 +45,23 @@ namespace comercializadora_de_pulpo_api.Repositories
                 query = query.Where(p => p.CreatedAt >= start && p.CreatedAt < end);
             }
 
-
             int total = await query.CountAsync();
 
-            query = query
+            var purchases = await query
                 .Include(p => p.RawMaterial)
                 .Include(p => p.Supplier)
-                .OrderByDescending(p => p.CreatedAt);
-
-            var purchases = await query
-                .Skip((request.Page - 1) * request.PageSize)
+                .OrderByDescending(p => p.CreatedAt)
+                .Skip(( request.Page - 1 ) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync();
 
-            var response = new PurchaseResponseDTO
+            return new PurchaseResponseDTO
             {
                 Page = request.Page,
                 Total = total,
-                TotalPages = (int)Math.Ceiling((double)total / request.PageSize),
+                TotalPages = ( int )Math.Ceiling(( double )total / request.PageSize),
                 Purchases = _mapper.Map<List<PurchaseDTO>>(purchases),
             };
-            return response;
         }
 
         public async Task<Purchase?> GetPurchaseById(Guid id)

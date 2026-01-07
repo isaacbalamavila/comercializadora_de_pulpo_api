@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using comercializadora_de_pulpo_api.Models;
-using comercializadora_de_pulpo_api.Models.DTOs.Products;
 using comercializadora_de_pulpo_api.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

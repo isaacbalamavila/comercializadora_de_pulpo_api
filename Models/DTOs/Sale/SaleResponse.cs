@@ -9,7 +9,7 @@ namespace comercializadora_de_pulpo_api.Models.DTOs.Sale
         public String Client { get; set; } = null!;
         public String? ClientRfc {get;set;}
         public String PaymentMethod { get; set; } = null!;
-        public DateTime SaleDate { get; set; }
+        public DateTime Date { get; set; }
 
         public List<SaleItemResponse> Products { get; set; } = [];
         public Decimal Total { get; set; }

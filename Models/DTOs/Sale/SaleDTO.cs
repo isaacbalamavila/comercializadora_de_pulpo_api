@@ -11,6 +11,7 @@ namespace comercializadora_de_pulpo_api.Models.DTOs.Sale
         public Guid Id { get; set; }
         public String Employee { get; set; } = null!;
         public String Client { get; set; } = null!;
+        public String PaymentMethod { get; set; } = null!;
         public DateTime Date {  get; set; }
         public Decimal Total { get; set; }
 

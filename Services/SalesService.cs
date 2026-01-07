@@ -257,7 +257,7 @@ namespace comercializadora_de_pulpo_api.Services
                     Id = sale.Id,
                     Employee = employeeSaved.FullName,
                     Client = clientSaved.Name,
-                    SaleDate = sale.SaleDate,
+                    Date = sale.SaleDate,
                     PaymentMethod = payment_method.Name,
                     Products = saleItemResponses,
                     Total = sale.TotalAmount,

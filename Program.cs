@@ -110,6 +110,7 @@ builder.Services.AddScoped<IProcessRepository, ProcessRepository>();
 builder.Services.AddScoped<IProductInventoryRepository, ProductsInventoryRepository>();
 builder.Services.AddScoped<IProductSupplyRepository, ProductSupplyRepository>();
 builder.Services.AddScoped<ISalesRepository, SalesRepository>();
+builder.Services.AddScoped<IReportRepository, ReportsRepository>();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -125,6 +126,7 @@ builder.Services.AddScoped<ISuppliesInventoryService, SuppliesInventoryService>(
 builder.Services.AddScoped<IProcessService, ProcessService>();
 builder.Services.AddScoped<IProductInventoryService, ProductInventoryService>();
 builder.Services.AddScoped<ISalesService, SalesService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 // Authorization Police
 builder

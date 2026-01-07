@@ -26,21 +26,24 @@ namespace comercializadora_de_pulpo_api.Repositories
                 query = query.Where(s => s.SaleDate >= start && s.SaleDate < end);
             }
 
-            int total = await query.CountAsync();
-
-            var sales = await query
-                .Skip((request.Page - 1) * request.PageSize)
-                .Take(request.PageSize)
+            var salesList = await query
+                .OrderByDescending(s => s.SaleDate)
                 .Select(s => new SaleDTO
                 {
                     Id = s.Id,
-                    Client = s.Client.Name,
-                    Employee = s.Employee.Name + " " + s.Employee.LastName,
+                    Client = s.Client != null ? s.Client.Name : "Sin cliente",
+                    Employee = $"{s.Employee.Name} {s.Employee.LastName}",
+                    PaymentMethod = s.PaymentMethodNavigation.Name,
                     Date = s.SaleDate,
                     Total = s.TotalAmount,
                 })
-                .OrderByDescending(s => s.Date)
                 .ToListAsync();
+
+            int total = salesList.Count;
+            var sales = salesList
+                .Skip((request.Page - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToList();
 
             return new SalesResponseDTO
             {
@@ -54,31 +57,30 @@ namespace comercializadora_de_pulpo_api.Repositories
         public async Task<SaleResponse?> GetSaleDetailsByIdAsync(Guid saleId)
         {
             return await _context
-                .Sales.Select(s => new SaleResponse
+                .Sales.Where(s => s.Id == saleId) // ✅ Filtrar PRIMERO
+                .Select(s => new SaleResponse
                 {
                     Id = s.Id,
                     Client = s.Client.Name,
                     ClientRfc = s.Client.Rfc,
-                    Employee = s.Employee.Name + " " + s.Employee.LastName,
+                    Employee = $"{s.Employee.Name} {s.Employee.LastName}",
                     PaymentMethod = s.PaymentMethodNavigation.Name,
-                    SaleDate = s.SaleDate,
+                    Date = s.SaleDate,
                     Total = s.TotalAmount,
                     Products = s
-                        .SaleItems.Select(s => new SaleItemResponse
+                        .SaleItems.Select(si => new SaleItemResponse
                         {
-                            SaleId = saleId,
-                            Sku = s.Product.Sku,
-                            Name = s.Product.Name,
-                            Content = s.Product.Content,
-                            Unit = s.Product.Unit.Abbreviation,
-                            Price = s.Product.Price,
-                            Quantity = s.Quantity,
-                            Subtotal = s.Subtotal,
+                            SaleId = s.Id,
+                            Sku = si.Product.Sku,
+                            Name = si.Product.Name,
+                            Content = si.Product.Content,
+                            Unit = si.Product.Unit.Abbreviation,
+                            Price = si.Product.Price,
+                            Quantity = si.Quantity,
+                            Subtotal = si.Subtotal,
                         })
-                        .Where(s => s.SaleId == saleId)
                         .ToList(),
                 })
-                .Where(s => s.Id == saleId)
                 .FirstOrDefaultAsync();
         }
     }
